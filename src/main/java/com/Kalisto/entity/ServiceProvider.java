@@ -19,17 +19,11 @@ public class ServiceProvider {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String pincode;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "state_id")
-    private State state;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "district_id")
-    private District district;
-
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation_id")
     private Designation designation;
 }
