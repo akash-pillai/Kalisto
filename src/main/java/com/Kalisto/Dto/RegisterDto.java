@@ -15,7 +15,6 @@ public class RegisterDto {
     private String fullName;
     private Long districtId;
     private Long stateId;
-    private Long roleId;
     private String pinCode;
     private Long designationId;
 

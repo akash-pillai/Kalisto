@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/info/**").permitAll() // Allow access to /info/** without authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

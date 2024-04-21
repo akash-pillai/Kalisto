@@ -1,4 +1,4 @@
-package com.Kalisto.util;
+package com.Kalisto.Dto;
 
 
 import lombok.AllArgsConstructor;
@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ResponseBody <T>{
+public class InfoDto {
 
-    T body;
-    String message;
-    int statusCode;
+    Long id;
+    String name;
 
 
 

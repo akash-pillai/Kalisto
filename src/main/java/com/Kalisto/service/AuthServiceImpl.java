@@ -2,6 +2,8 @@ package com.Kalisto.service;
 
 import com.Kalisto.Dto.RegisterDto;
 import com.Kalisto.entity.*;
+import com.Kalisto.exceptions.EmailAlreadyExistsException;
+import com.Kalisto.exceptions.PhoneAlreadyExistsException;
 import com.Kalisto.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -10,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
-public class AuthServiceImpl implements  AuthService{
 
+@Service
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     RoleRepository roleRepository;
-
 
     @Autowired
     AddressRepository addressRepository;
@@ -30,7 +31,6 @@ public class AuthServiceImpl implements  AuthService{
     @Autowired
     StateRepository stateRepository;
 
-
     @Autowired
     ClientRepository clientRepository;
 
@@ -40,11 +40,18 @@ public class AuthServiceImpl implements  AuthService{
     @Autowired
     ServiceProviderrepository serviceProviderrepository;
 
-
     @Override
-    public boolean registerUser(RegisterDto registerDto) {
+    public void registerUser(RegisterDto registerDto) throws EmailAlreadyExistsException, PhoneAlreadyExistsException {
+        if (isEmailExisting(registerDto.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        if (isPhoneExisting(registerDto.getPhone())) {
+            throw new PhoneAlreadyExistsException("Phone number already exists");
+        }
+
         try {
-            Role role = roleRepository.findById(registerDto.getRoleId())
+            Role role = roleRepository.findById(1L)
                     .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
             User user = createUserFromDto(registerDto, role);
@@ -58,11 +65,17 @@ public class AuthServiceImpl implements  AuthService{
             } else if (role.getName().equals("Client")) {
                 addClient(registerDto, user, address);
             }
-
-            return true;
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
+    }
+
+    private boolean isEmailExisting(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    private boolean isPhoneExisting(String phone) {
+        return userRepository.findByPhone(phone).isPresent();
     }
 
     private User createUserFromDto(RegisterDto registerDto, Role role) {
@@ -105,11 +118,4 @@ public class AuthServiceImpl implements  AuthService{
                 .orElseThrow(() -> new IllegalArgumentException("Designation not found")));
         serviceProviderrepository.save(serviceProvider);
     }
-
-
-
-
-
-
-
 }
